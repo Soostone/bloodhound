@@ -457,22 +457,22 @@ newtype ReplicaCount = ReplicaCount Int deriving (Eq, Show, Generic)
 
 {-| 'Server' is used with the client functions to point at the ES instance
 -}
-newtype Server = Server String deriving (Eq, Show)
+newtype Server = Server Text deriving (Eq, Show)
 
 {-| 'IndexName' is used to describe which index to query/create/delete
 -}
-newtype IndexName = IndexName String deriving (Eq, Generic, Show)
+newtype IndexName = IndexName Text deriving (Eq, Generic, Show)
 
 {-| 'MappingName' is part of mappings which are how ES describes and schematizes
     the data in the indices.
 -}
-newtype MappingName = MappingName String deriving (Eq, Generic, Show)
+newtype MappingName = MappingName Text deriving (Eq, Generic, Show)
 
 {-| 'DocId' is a generic wrapper value for expressing unique Document IDs.
     Can be set by the user or created by ES itself. Often used in client
     functions for poking at specific documents.
 -}
-newtype DocId = DocId String deriving (Eq, Generic, Show)
+newtype DocId = DocId Text deriving (Eq, Generic, Show)
 
 {-| 'QueryString' is used to wrap query text bodies, be they human written or not.
 -}
@@ -583,7 +583,7 @@ newtype MaxDocFrequency = MaxDocFrequency Int deriving (Eq, Show, Generic)
 
 {-| 'unpackId' is a silly convenience function that gets used once.
 -}
-unpackId :: DocId -> String
+unpackId :: DocId -> Text
 unpackId (DocId docId) = docId
 
 type TrackSortScores = Bool
@@ -1397,7 +1397,7 @@ instance ToJSON Filter where
   toJSON (IdsFilter (MappingName mappingName) values) =
     object ["ids" .=
             object ["type" .= mappingName
-                   , "values" .= fmap (T.pack . unpackId) values]]
+                   , "values" .= fmap unpackId values]]
 
   toJSON (LimitFilter limit) =
     object ["limit" .= object ["value" .= limit]]
